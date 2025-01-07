@@ -97,6 +97,9 @@ public static void showRent() {
             "Jadwal Keberangkatan",
             "Jadwal Kembali");
     System.out.println("======================================================================================================================================================");
+   if(rentals.isEmpty()){
+       System.out.println("Tidak Ada Data");
+   }
     for(int i = 0; i < rentals.size(); i++) {
         RentalData rental = rentals.get(i);
         Car car = getCarById(rental.carId);
@@ -513,7 +516,7 @@ public static void insertRent() throws IOException, ParseException {
     }
     if (rentals.isEmpty()) {
         System.out.println("Tidak ada data rental untuk dicetak.");
-        System.out.println("Tekan enter untuk kembali ke menu...");
+        System.out.print("Tekan enter untuk kembali ke menu...");
         Input.readLine();
     }
 }
