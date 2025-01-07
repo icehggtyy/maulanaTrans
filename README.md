@@ -1,6 +1,7 @@
 # maulanaTrans
 Rental Mobil Desktop Application with java, Algoritma tugas akhir 
 Perkembangan teknologi informasi yang semakin pesat telah mengubah cara bisnis beroperasi di berbagai sektor, termasuk industri rental mobil. Saat ini, banyak perusahaan rental mobil masih menggunakan sistem manual dalam pengelolaan bisnisnya, yang meliputi pencatatan data pelanggan, inventaris mobil, transaksi peminjaman, dan pengembalian. Sistem manual ini memiliki berbagai keterbatasan dan risiko, seperti kesalahan pencatatan, kesulitan dalam pelacakan mobil, dan lambatnya proses pelayanan kepada pelanggan.
+</br>
 Pseudocode :
 Deklarasi Variabel:
 int id, rentalId, carId;
