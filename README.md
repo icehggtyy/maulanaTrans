@@ -1,5 +1,5 @@
 # maulanaTrans
-Rental Mobil Desktop Application with java, Algoritma tugas akhir.
+Rental Mobil Desktop Application with java, Algoritma tugas akhir Institut Widya Pratama.
 </br>
 Nama : Muhammad Ichsan
 </br>
