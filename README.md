@@ -5,11 +5,17 @@ Perkembangan teknologi informasi yang semakin pesat telah mengubah cara bisnis b
 Pseudocode :
 </br>
 Deklarasi Variabel:
+</br>
 int id, rentalId, carId;
+</br>
 String namaMobil, NIK, nama, tujuan;
+</br>
 double biaya, totalBiaya;
+</br>
 boolean isAvailable, tujuans, supir;
+</br>
 Date jadwalBerangkat, jadwalKembal;
+</br>
 -	Input
 Masukan NIK, Nama, Mobil yang dipilih, jadwal berangkat, jadwal kembali, menggunakan sopir atau tidak.
 -	Proses
