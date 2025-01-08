@@ -11,24 +11,23 @@ Pseudocode :
 </br>
 Deklarasi Variabel:
 </br>
-int id, rentalId, carId;
+int id, idSewa, idMobil;
 </br>
-String namaMobil, NIK, nama, tujuan;
+String namaMobil, nik, nama, tujuan;
 </br>
 double biaya, totalBiaya;
 </br>
-boolean isAvailable, tujuans, supir;
+boolean tersedia, tergantungTujuan, supir;
 </br>
-Date jadwalBerangkat, jadwalKembal;
-</br>
+Date tanggalBerangkat, tanggallKembal;
 -	Input
 Masukan NIK, Nama, Mobil yang dipilih, jadwal berangkat, jadwal kembali, menggunakan sopir atau tidak.
 -	Proses
 Memproses data, menghitung biaya, durasi dalam hari, dan kalkulasi biaya total
 -	Output	
-Mencetak data laporan dengan pagination, dengan 3 data per halaman dengan subtotal halaman dan grand total.
+</br>
+Mencetak data laporan dengan pagination, dengan 3 data per halaman dengan subtotal halaman dan grand total
 </br>
 Untuk lebih detailnya silahkan click file <a href="https://github.com/icehggtyy/maulanaTrans/blob/main/Pseudocode">Pseudocode</a> 
 </br>
-
 Link Download Program <a href="https://drive.google.com/drive/folders/148PMSFF0EssnYybxjr2NqiQ3saZBbwvc?usp=sharing" target="_blank" style="text-decoration: none;">Click Me!</a> 
