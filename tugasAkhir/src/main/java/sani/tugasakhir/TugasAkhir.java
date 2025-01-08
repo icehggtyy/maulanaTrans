@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sani.tugasakhir;
 import java.io.*;
 import java.text.ParseException;
@@ -9,461 +5,84 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
-/**
- *
- * @author Windows
- */
 public class TugasAkhir {
-    public static ArrayList<Car> cars = new ArrayList<>();
-    public static ArrayList<RentalData> rentals = new ArrayList<>();
-    public static BufferedReader Input = new BufferedReader(new InputStreamReader(System.in));
-    public static boolean carss = true; 
-    static class Car {
+    public static ArrayList<Mobil> daftarMobil = new ArrayList<>();
+    public static ArrayList<DataSewa> daftarSewa = new ArrayList<>();
+    public static BufferedReader Masukan = new BufferedReader(new InputStreamReader(System.in));
+    public static boolean lanjutMobil = true; 
+    
+    static class Mobil {
         int id;
         String namaMobil;
         double biaya;
-        boolean isAvailable;
-        boolean tujuans;
-        Car(int id, String namaMobil, double biaya, boolean tujuans) {
+        boolean tersedia;
+        boolean tergantungTujuan;
+        
+        Mobil(int id, String namaMobil, double biaya, boolean tergantungTujuan) {
             this.id = id;
             this.namaMobil = namaMobil;
             this.biaya = biaya;
-            this.isAvailable = true;
-            this.tujuans = tujuans;
+            this.tersedia = true;
+            this.tergantungTujuan = tergantungTujuan;
         }
     }
-static class RentalData {
-    int rentalId;
-    int carId;
-    String nik;
-    String nama;
-    boolean supir;
-    String tujuan;
-    double totalBiaya;
-    Date jadwalBerangkat;
-    Date jadwalKembali;
-    RentalData(int rentalId, int carId, String nik, String nama, boolean supir, 
-               String tujuan, double totalBiaya, Date jadwalBerangkat, Date jadwalKembali) {
-        this.rentalId = rentalId;
-        this.carId = carId;
-        this.nik = nik;
-        this.nama = nama;
-        this.supir = supir;
-        this.tujuan = tujuan;
-        this.totalBiaya = totalBiaya;
-        this.jadwalBerangkat = jadwalBerangkat;
-        this.jadwalKembali = jadwalKembali;
-    }
-}
-public static Car getCarById(int carId) {
-    for(Car car : cars) {
-        if(car.id == carId) {
-            return car;
-        }
-    }
-    return null;  
-}
-private static void initializeSampleRentalData() {
-    try {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        rentals.add(new RentalData(
-            1,                             
-            1,                            
-            "3525015201882",           
-            "John Doe",                     
-            true,                           
-            "Surabaya",                     
-            800000,                        
-            sdf.parse("01-01-2025"),      
-            sdf.parse("03-01-2025")        
-        ));
-    } catch (ParseException e) {
-        System.out.println("Error initializing sample data: " + e.getMessage());
-    }
-}
-public static void showRent() {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    System.out.println("All Rental Data");
-    System.out.println("======================================================================================================================================================");
-    System.out.printf("|%-4s|%-15s|%-15s|%-18s|%-8s|%-12s|%-15s|%-12s|%-23s|%-16s|\n",
-            "No.",
-            "Nama",
-            "NIK",
-            "Mobil",
-            "Supir",
-            "Tujuan",
-            "Total Biaya",
-            "Durasi (hari)",
-            "Jadwal Keberangkatan",
-            "Jadwal Kembali");
-    System.out.println("======================================================================================================================================================");
-   if(rentals.isEmpty()){
-       System.out.println("Tidak Ada Data");
-   }
-    for(int i = 0; i < rentals.size(); i++) {
-        RentalData rental = rentals.get(i);
-        Car car = getCarById(rental.carId);
-        String carName = car != null ? car.namaMobil : "Unknown";
-        long diffInMillies = rental.jadwalKembali.getTime() - rental.jadwalBerangkat.getTime();
-        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        System.out.printf("|%-4d|%-15s|%-15s|%-18s|%-8s|%-12s|Rp %-12.0f|%-13d|%-23s|%-16s|\n",
-            i + 1,
-            rental.nama,
-            rental.nik,
-            carName,
-            rental.supir ? "Ya" : "Tidak",
-            rental.tujuan,
-            rental.totalBiaya,
-            diffInDays,
-            sdf.format(rental.jadwalBerangkat),
-            sdf.format(rental.jadwalKembali));
-    }
-    System.out.println("======================================================================================================================================================");
-}
-public static void insertRent() throws IOException, ParseException {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    boolean continueCustomer = true;
-    int rentalId = rentals.size() + 1;
-    while(continueCustomer) {
-        System.out.print("Masukkan NIK: ");
-        String nik = Input.readLine();
-        System.out.print("Masukkan Nama: ");
-        String nama = Input.readLine();
-        boolean continueRental = true;
-        while(continueRental && !cars.isEmpty()) {
-            showallCars();
-            System.out.print("Pilih nomor mobil (1-" + cars.size() + "): ");
-            int carIndex = Integer.parseInt(Input.readLine()) - 1;
-            if(carIndex >= 0 && carIndex < cars.size()) {
-                Car selectedCar = cars.get(carIndex);
-                if(!selectedCar.isAvailable) {
-                    System.out.println("Mobil tidak tersedia untuk disewa!");
-                    continue;
-                }
-                System.out.print("Menggunakan Supir? (y/t): ");
-                boolean useSupir = Input.readLine().equalsIgnoreCase("y");
-                System.out.print("Masukkan Tanggal Berangkat (dd-MM-yyyy): ");
-                Date jadwalBerangkat = sdf.parse(Input.readLine());
-                System.out.print("Masukkan Tanggal Kembali (dd-MM-yyyy): ");
-                Date jadwalKembali = sdf.parse(Input.readLine());
-                long diffInMillies = jadwalKembali.getTime() - jadwalBerangkat.getTime();
-                long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                double totalBiaya;
-                String tujuan = "-";
-                if(selectedCar.tujuans) {
-                    System.out.print("Masukkan Tujuan: ");
-                    tujuan = Input.readLine();
-                    System.out.print("Masukkan Biaya Sesuai Tujuan: ");
-                    totalBiaya = Double.parseDouble(Input.readLine());
-                } else {
-                    System.out.print("Masukkan Tujuan: ");
-                    tujuan = Input.readLine();
-                    totalBiaya = selectedCar.biaya * diffInDays;
-                }
-                
-                if(useSupir) {
-                    totalBiaya += 500000 * diffInDays; 
-                }
-                rentals.add(new RentalData(rentalId, selectedCar.id, nik, nama, useSupir, 
-                                         tujuan, totalBiaya, jadwalBerangkat, jadwalKembali));
-                selectedCar.isAvailable = false;
-                
-                System.out.println("Rental berhasil ditambahkan!");
-                System.out.println("Total Biaya: Rp " + String.format("%,.0f", totalBiaya));
-                
-                System.out.print("Sewa mobil lain untuk pelanggan yang sama? (y/t): ");
-                if(Input.readLine().equalsIgnoreCase("t")) {
-                    continueRental = false;
-                }
-                rentalId++;
-            } else {
-                System.out.println("Nomor mobil tidak valid!");
-            }
-        }
+
+    static class DataSewa {
+        int idSewa;
+        int idMobil;
+        String nik;
+        String nama;
+        boolean supir;
+        String tujuan;
+        double totalBiaya;
+        Date tanggalBerangkat;
+        Date tanggalKembali;
         
-        System.out.print("Tambah pelanggan baru? (y/t): ");
-        if(Input.readLine().equalsIgnoreCase("t")) {
-            continueCustomer = false;
+        DataSewa(int idSewa, int idMobil, String nik, String nama, boolean supir, 
+                String tujuan, double totalBiaya, Date tanggalBerangkat, Date tanggalKembali) {
+            this.idSewa = idSewa;
+            this.idMobil = idMobil;
+            this.nik = nik;
+            this.nama = nama;
+            this.supir = supir;
+            this.tujuan = tujuan;
+            this.totalBiaya = totalBiaya;
+            this.tanggalBerangkat = tanggalBerangkat;
+            this.tanggalKembali = tanggalKembali;
         }
     }
-}
-    public static void showMenu(){
-        System.out.println("1. Tampilkan semua mobil");
-        System.out.println("2. Tambah mobil");
-        System.out.println("3. Hapus mobil");
-        System.out.println("4. Edit mobil");
-        System.out.println("5. Tampilkan semua data rental");
-        System.out.println("6. Masukan data rental");
-        System.out.println("7. Edit data rental");
-        System.out.println("8. Hapus data rental");
-        System.out.println("9. Cetak laporan rental");
-        System.out.println("0. Exit");
-    }
-    public static void showallCars()throws IOException {
-        System.out.println("Data Mobil");
-        System.out.println("=================================================================================");
-        System.out.printf("|%-4s|%-15s|%-18s|%-15s|%-23s|",
-                "No.",
-                "Nama Mobil",
-                "Harga Sewa",
-                "Ketersediaan",
-                "Keterangan");
-        System.out.println();
-        System.out.println("|====+===============+==================+===============+=======================|");
-        if(cars.isEmpty()){
-            System.out.println("Tidak Terdapat Data");
-        }
-        for(int i = 0; i < cars.size(); i++) {
-            Car car = cars.get(i);
-            String ketersediaan = car.isAvailable ? "Tersedia" : "Tidak Tersedia";
-            String keterangan = car.tujuans ? "Tergantung tujuan" : "Tidak Tergantung Tujuan";
-            System.out.printf("|%-4d|%-15s|Rp %-,11.0f/day|%-15s|%-23s|",
-                i + 1,
-                car.namaMobil,
-                car.biaya, 
-                ketersediaan,
-                keterangan);
-            System.out.println();
-        }
-        System.out.println("=================================================================================");
-    }
-    private static void initializeSampleData() {
-        cars.add(new Car(1, "Avanza", 350000, false));
-        cars.add(new Car(2, "Inova Reborn", 700000, false));
-         cars.add(new Car(3, "Brio", 300000, false));
-        cars.add(new Car(4, "Ertiga", 400000, false));
-        cars.add(new Car(5, "Elf Long", 0, true));
-        cars.add(new Car(6, "Hiace", 0, true));
-    }
-    public static void insertCars()throws IOException {
-        carss = true;
-        String namaMobils; 
-        int idCars = 1;
-        double biayas;
-        boolean tujuanss;
-        while(carss){
-            System.out.print("Masukan Nama Mobil : ");
-            namaMobils = Input.readLine();
-            System.out.print("Apakah tergantung tujuan [y/t] ? ");
-            String tujuan = Input.readLine();
-            if(tujuan.equalsIgnoreCase("y")){
-                System.out.println("Mobil ini termasuk tergantung tujuan");
-                biayas = 0;
-                tujuanss = true;
-            } else {
-            System.out.println("Mobil ini bukan termasuk tergantung tujuan");
-            tujuanss = false;
-            System.out.print("Masukan Biaya Per Hari : ");
-            biayas = Double.parseDouble(Input.readLine());
+
+    public static Mobil dapatkanMobilDariId(int idMobil) {
+        for(Mobil mobil : daftarMobil) {
+            if(mobil.id == idMobil) {
+                return mobil;
             }
-            cars.add(new Car(idCars, namaMobils, biayas, tujuanss));
-            System.out.print("Masukan data lagi [y/t] ? ");
-            String dataLg = Input.readLine();
-            if(dataLg.equalsIgnoreCase("t")){
-                carss = false;
-            }
-            idCars++;
+        }
+        return null;  
+    }
+
+    private static void inisialisasiContohDataSewa() {
+        try {
+            SimpleDateFormat formatTanggal = new SimpleDateFormat("dd-MM-yyyy");
+            daftarSewa.add(new DataSewa(
+                1,                             
+                1,                            
+                "3525015201882",           
+                "John Doe",                     
+                true,                           
+                "Surabaya",                     
+                800000,                        
+                formatTanggal.parse("01-01-2025"),      
+                formatTanggal.parse("03-01-2025")        
+            ));
+        } catch (ParseException e) {
+            System.out.println("Error initializing sample data: " + e.getMessage());
         }
     }
-   public static void deleteCars() throws IOException {
-    carss = true;
-    while(carss) {
-       if(cars.isEmpty()){
-           System.out.println("Tidak Ada Data yang bisa di hapus");
-       }
-       showallCars();
-        System.out.print("Masukan Nomer (1-" + cars.size() + "): ");
-        int position = Integer.parseInt(Input.readLine());
-        if (position >= 1 && position <= cars.size()) {
-            cars.remove(position - 1);
-            System.out.println("Mobil dihapus!");
-        } else {
-            System.out.println("Input tidak valid!");
-        }
-        
-        System.out.print("Hapus Mobil yang lain ? [y/t] ");
-        String hapus = Input.readLine();
-        if(hapus.equalsIgnoreCase("t")) {
-            carss = false;
-        }
-    }
-}
-   public static void editCars()throws IOException {
-       carss = true;
-       while(carss){
-           if(cars.isEmpty()){
-               System.out.println("Tidak Ada Data Yang Bisa di Edit");
-           }
-           showallCars();
-           System.out.println("Masukan Nomer (1-"+cars.size()+"): ");
-           int position =  Integer.parseInt(Input.readLine());
-           if(position >= 1 && position <= cars.size()){
-               Car car = cars.get(position-1);
-               System.out.println("Tekan Enter Untuk Mempertahankan Data Lama");
-               System.out.print("Masukan Nama Mobil Baru ["+car.namaMobil+"] :");
-               String newName = Input.readLine();
-               if(!newName.isEmpty()){
-                   car.namaMobil = newName;
-               }
-               System.out.print("Tergantung tujuan [y/t] ["+car.tujuans+"] :" );
-               String tujuan = Input.readLine();
-               if(!tujuan.isEmpty()){
-                   if(tujuan.equalsIgnoreCase("y")){
-                       car.tujuans = true;
-                       car.biaya = 0;
-                       System.out.println("Mobil Ini Tergantung Tujuan");
-                   }else {
-                       car.tujuans = false;
-                       System.out.print("Masukan Biaya Per Hari ["+car.biaya+"] : ");
-                       String newBiaya = Input.readLine();
-                       if(!newBiaya.isEmpty()){
-                           car.biaya = Double.parseDouble(newBiaya);
-                       }
-                   }
-               }
-               System.out.println("Data Berhasil Di update");
-           } else {
-               System.out.println("Nomer Tidak Valid!!");
-           }
-            System.out.print("Ingin Mengubah data lagi [y/t] : ");
-            String jawab = Input.readLine();
-            if(jawab.equalsIgnoreCase("t")){
-                carss = false;
-            }
-        }
-   }
-   public static void deleteRent() throws IOException {
-    boolean delete = true;
-    while(delete) {
-        if(rentals.isEmpty()) {
-            System.out.println("Tidak Ada Data Rental yang bisa dihapus");
-            return;
-        }
-        showRent();
-        System.out.print("Masukan Nomor Rental yang akan dihapus (1-" + rentals.size() + "): ");
-        int position = Integer.parseInt(Input.readLine());
-        if (position >= 1 && position <= rentals.size()) {
-            RentalData rentalToDelete = rentals.get(position - 1);
-            for(Car car : cars) {
-                if(car.id == rentalToDelete.carId) {
-                    car.isAvailable = true;
-                    break;
-                }
-            }
-            rentals.remove(position - 1);
-            System.out.println("Data Rental berhasil dihapus!");
-        } else {
-            System.out.println("Nomor Rental tidak valid!");
-        }
-        System.out.print("Hapus data rental lain? (y/t): ");
-        String jawab = Input.readLine();
-        if(jawab.equalsIgnoreCase("t")) {
-            delete = false;
-        }
-    }
-}
-   public static void editRent() throws IOException, ParseException {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    boolean continueEdit = true;
-    while(continueEdit) {
-        if(rentals.isEmpty()) {
-            System.out.println("Tidak Ada Data Rental yang bisa diedit");
-            return;
-        }
-        showRent();
-        System.out.print("Masukan Nomor Rental yang akan diedit (1-" + rentals.size() + "): ");
-        int position = Integer.parseInt(Input.readLine());
-        if (position >= 1 && position <= rentals.size()) {
-            RentalData rental = rentals.get(position - 1);
-            Car currentCar = getCarById(rental.carId);
-            System.out.println("\nTekan Enter untuk mempertahankan data lama");
-            System.out.print("Masukkan Nama Baru [" + rental.nama + "]: ");
-            String newName = Input.readLine();
-            if(!newName.isEmpty()) {
-                rental.nama = newName;
-            }
-            System.out.print("Masukkan NIK Baru [" + rental.nik + "]: ");
-            String newNik = Input.readLine();
-            if(!newNik.isEmpty()) {
-                rental.nik = newNik;
-            }
-            System.out.print("Ganti Mobil? (y/t): ");
-            if(Input.readLine().equalsIgnoreCase("y")) {
-                showallCars();
-                System.out.print("Pilih nomor mobil baru (1-" + cars.size() + "): ");
-                int newCarIndex = Integer.parseInt(Input.readLine()) - 1;
-                
-                if(newCarIndex >= 0 && newCarIndex < cars.size()) {
-                    Car newCar = cars.get(newCarIndex);
-                    if(!newCar.isAvailable && newCar.id != currentCar.id) {
-                        System.out.println("Mobil tidak tersedia untuk disewa!");
-                    } else {
-                        currentCar.isAvailable = true;
-                        newCar.isAvailable = false;
-                        rental.carId = newCar.id;
-                    }
-                } else {
-                    System.out.println("Nomor mobil tidak valid!");
-                }
-            }
-            System.out.print("Gunakan Supir? (y/t) [" + (rental.supir ? "y" : "t") + "]: ");
-            String newSupir = Input.readLine();
-            if(!newSupir.isEmpty()) {
-                rental.supir = newSupir.equalsIgnoreCase("y");
-            }
-            System.out.print("Masukkan Tanggal Berangkat Baru (dd-MM-yyyy) [" + sdf.format(rental.jadwalBerangkat) + "]: ");
-            String newStartDate = Input.readLine();
-            if(!newStartDate.isEmpty()) {
-                rental.jadwalBerangkat = sdf.parse(newStartDate);
-            }
-            System.out.print("Masukkan Tanggal Kembali Baru (dd-MM-yyyy) [" + sdf.format(rental.jadwalKembali) + "]: ");
-            String newEndDate = Input.readLine();
-            if(!newEndDate.isEmpty()) {
-                rental.jadwalKembali = sdf.parse(newEndDate);
-            }
-            Car selectedCar = getCarById(rental.carId);
-            System.out.print("Masukkan Tujuan Baru [" + rental.tujuan + "]: ");
-            String newTujuan = Input.readLine();
-            if(!newTujuan.isEmpty()) {
-                rental.tujuan = newTujuan;
-            }
-            long diffInMillies = rental.jadwalKembali.getTime() - rental.jadwalBerangkat.getTime();
-            long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-            if(selectedCar.tujuans) {
-                System.out.print("Masukkan Biaya Sesuai Tujuan Baru: ");
-                String newBiaya = Input.readLine();
-                if(!newBiaya.isEmpty()) {
-                    rental.totalBiaya = Double.parseDouble(newBiaya);
-                }
-            } else {
-                rental.totalBiaya = selectedCar.biaya * diffInDays;
-            }
-            if(rental.supir) {
-                rental.totalBiaya += 500000 * diffInDays;
-            }
-            System.out.println("Data Rental berhasil diupdate!");
-            System.out.println("Total Biaya Baru: Rp " + String.format("%,.0f", rental.totalBiaya));
-        } else {
-            System.out.println("Nomor Rental tidak valid!");
-        }
-        System.out.print("Edit data rental lain? (y/t): ");
-        String jawab = Input.readLine();
-        if(jawab.equalsIgnoreCase("t")) {
-            continueEdit = false;
-        }
-    }
-}
-   public static void cetakLaporan() throws IOException {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    final int ITEMS_PER_PAGE = 3;
-    int totalPages = (int) Math.ceil((double) rentals.size() / ITEMS_PER_PAGE);
-    double grandTotal = 0;
-    for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-        System.out.println("LAPORAN DATA RENTAL MOBIL");
-        System.out.println("MAULANA TRANS");
-        System.out.println("Halaman: " + currentPage + " dari " + totalPages);
+
+    public static void tampilkanSewa() {
+        SimpleDateFormat formatTanggal = new SimpleDateFormat("dd-MM-yyyy");
+        System.out.println("All Rental Data");
         System.out.println("======================================================================================================================================================");
         System.out.printf("|%-4s|%-15s|%-15s|%-18s|%-8s|%-12s|%-15s|%-12s|%-23s|%-16s|\n",
                 "No.",
@@ -477,71 +96,479 @@ public static void insertRent() throws IOException, ParseException {
                 "Jadwal Keberangkatan",
                 "Jadwal Kembali");
         System.out.println("======================================================================================================================================================");
-        int startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-        int endIdx = Math.min(startIdx + ITEMS_PER_PAGE, rentals.size());
-        double subtotal = 0;
-        for (int i = startIdx; i < endIdx; i++) {
-            RentalData rental = rentals.get(i);
-            Car car = getCarById(rental.carId);
-            String carName = car != null ? car.namaMobil : "Unknown";
-            long diffInMillies = rental.jadwalKembali.getTime() - rental.jadwalBerangkat.getTime();
-            long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-            System.out.printf("|%-4d|%-15s|%-15s|%-18s|%-8s|%-12s|Rp %,-12.0f|%-13d|%-23s|%-16s|\n",
+        if(daftarSewa.isEmpty()){
+            System.out.println("Tidak Ada Data");
+        }
+        for(int i = 0; i < daftarSewa.size(); i++) {
+            DataSewa sewa = daftarSewa.get(i);
+            Mobil mobil = dapatkanMobilDariId(sewa.idMobil);
+            String namaMobil = mobil != null ? mobil.namaMobil : "Unknown";
+            long selisihMiliDetik = sewa.tanggalKembali.getTime() - sewa.tanggalBerangkat.getTime();
+            long selisihHari = TimeUnit.DAYS.convert(selisihMiliDetik, TimeUnit.MILLISECONDS);
+            System.out.printf("|%-4d|%-15s|%-15s|%-18s|%-8s|%-12s|Rp %-12.0f|%-13d|%-23s|%-16s|\n",
                 i + 1,
-                rental.nama,
-                rental.nik,
-                carName,
-                rental.supir ? "Ya" : "Tidak",
-                rental.tujuan,
-                rental.totalBiaya,
-                diffInDays,
-                sdf.format(rental.jadwalBerangkat),
-                sdf.format(rental.jadwalKembali));
+                sewa.nama,
+                sewa.nik,
+                namaMobil,
+                sewa.supir ? "Ya" : "Tidak",
+                sewa.tujuan,
+                sewa.totalBiaya,
+                selisihHari,
+                formatTanggal.format(sewa.tanggalBerangkat),
+                formatTanggal.format(sewa.tanggalKembali));
+        }
+        System.out.println("======================================================================================================================================================");
+    }
+
+    public static void tambahSewa() throws IOException, ParseException {
+        SimpleDateFormat formatTanggal = new SimpleDateFormat("dd-MM-yyyy");
+        boolean lanjutPelanggan = true;
+        int idSewa = daftarSewa.size() + 1;
+        while(lanjutPelanggan) {
+            System.out.print("Masukkan NIK: ");
+            String nik = Masukan.readLine();
+            System.out.print("Masukkan Nama: ");
+            String nama = Masukan.readLine();
+            boolean lanjutSewa = true;
+            while(lanjutSewa && !daftarMobil.isEmpty()) {
+                tampilkanSemuaMobil();
+                System.out.print("Pilih nomor mobil (1-" + daftarMobil.size() + "): ");
+                int indeksMobil = Integer.parseInt(Masukan.readLine()) - 1;
+                if(indeksMobil >= 0 && indeksMobil < daftarMobil.size()) {
+                    Mobil mobilDipilih = daftarMobil.get(indeksMobil);
+                    if(!mobilDipilih.tersedia) {
+                        System.out.println("Mobil tidak tersedia untuk disewa!");
+                        continue;
+                    }
+                    System.out.print("Menggunakan Supir? (y/t): ");
+                    boolean gunakanSupir = Masukan.readLine().equalsIgnoreCase("y");
+                    System.out.print("Masukkan Tanggal Berangkat (dd-MM-yyyy): ");
+                    Date tanggalBerangkat = formatTanggal.parse(Masukan.readLine());
+                    System.out.print("Masukkan Tanggal Kembali (dd-MM-yyyy): ");
+                    Date tanggalKembali = formatTanggal.parse(Masukan.readLine());
+                    long selisihMiliDetik = tanggalKembali.getTime() - tanggalBerangkat.getTime();
+                    long selisihHari = TimeUnit.DAYS.convert(selisihMiliDetik, TimeUnit.MILLISECONDS);
+                    double totalBiaya;
+                    String tujuan = "-";
+                    if(mobilDipilih.tergantungTujuan) {
+                        System.out.print("Masukkan Tujuan: ");
+                        tujuan = Masukan.readLine();
+                        System.out.print("Masukkan Biaya Sesuai Tujuan: ");
+                        totalBiaya = Double.parseDouble(Masukan.readLine());
+                    } else {
+                        System.out.print("Masukkan Tujuan: ");
+                        tujuan = Masukan.readLine();
+                        totalBiaya = mobilDipilih.biaya * selisihHari;
+                    }
+                    if(gunakanSupir) {
+                        totalBiaya += 500000 * selisihHari;
+                    }
+                    daftarSewa.add(new DataSewa(idSewa, mobilDipilih.id, nik, nama, gunakanSupir, 
+                                             tujuan, totalBiaya, tanggalBerangkat, tanggalKembali));
+                    mobilDipilih.tersedia = false;
+                    System.out.println("Rental berhasil ditambahkan!");
+                    System.out.println("Total Biaya: Rp " + String.format("%,.0f", totalBiaya));
+                    System.out.print("Sewa mobil lain untuk pelanggan yang sama? (y/t): ");
+                    if(Masukan.readLine().equalsIgnoreCase("t")) {
+                        lanjutSewa = false;
+                    }
+                    idSewa++;
+                } else {
+                    System.out.println("Nomor mobil tidak valid!");
+                }
+            }
+            System.out.print("Tambah pelanggan baru? (y/t): ");
+            if(Masukan.readLine().equalsIgnoreCase("t")) {
+                lanjutPelanggan = false;
+            }
+        }
+    }
+
+    public static void tampilkanMenu(){
+        System.out.println("1. Tampilkan semua mobil");
+        System.out.println("2. Tambah mobil");
+        System.out.println("3. Hapus mobil");
+        System.out.println("4. Edit mobil");
+        System.out.println("5. Tampilkan semua data rental");
+        System.out.println("6. Masukan data rental");
+        System.out.println("7. Edit data rental");
+        System.out.println("8. Hapus data rental");
+        System.out.println("9. Cetak laporan rental");
+        System.out.println("0. Exit");
+    }
+
+    public static void tampilkanSemuaMobil() throws IOException {
+        System.out.println("Data Mobil");
+        System.out.println("=================================================================================");
+        System.out.printf("|%-4s|%-15s|%-18s|%-15s|%-23s|",
+                "No.",
+                "Nama Mobil",
+                "Harga Sewa",
+                "Ketersediaan",
+                "Keterangan");
+        System.out.println();
+        System.out.println("|====+===============+==================+===============+=======================|");
+        if(daftarMobil.isEmpty()){
+            System.out.println("Tidak Terdapat Data");
+        }
+        
+        for(int i = 0; i < daftarMobil.size(); i++) {
+            Mobil mobil = daftarMobil.get(i);
+            String ketersediaan = mobil.tersedia ? "Tersedia" : "Tidak Tersedia";
+            String keterangan = mobil.tergantungTujuan ? "Tergantung tujuan" : "Tidak Tergantung Tujuan";
+            System.out.printf("|%-4d|%-15s|Rp %-,11.0f/day|%-15s|%-23s|",
+                i + 1,
+                mobil.namaMobil,
+                mobil.biaya, 
+                ketersediaan,
+                keterangan);
+            System.out.println();
+        }
+        System.out.println("=================================================================================");
+        System.out.println("Keterangan : Jika Mobil tergolong ke dalam tergantung tujuan maka harga ditentukan sendiri sehingga di dalam tabel harga 0");
+    }
+
+    private static void inisialisasiContohData() {
+        daftarMobil.add(new Mobil(1, "Avanza", 350000, false));
+        daftarMobil.add(new Mobil(2, "Inova Reborn", 700000, false));
+        daftarMobil.add(new Mobil(3, "Brio", 300000, false));
+        daftarMobil.add(new Mobil(4, "Ertiga", 400000, false));
+        daftarMobil.add(new Mobil(5, "Elf Long", 0, true));
+        daftarMobil.add(new Mobil(6, "Hiace", 0, true));
+    }
+
+    public static void tambahMobil() throws IOException {
+        lanjutMobil = true;
+        String namaMobilBaru;
+        int idMobilBaru = 1;
+        double biayaBaru;
+        boolean tergantungTujuanBaru;
+        while(lanjutMobil) {
+            System.out.print("Masukan Nama Mobil : ");
+            namaMobilBaru = Masukan.readLine();
+            System.out.print("Apakah tergantung tujuan [y/t] ? ");
+            String tujuan = Masukan.readLine();
+            if(tujuan.equalsIgnoreCase("y")){
+                System.out.println("Mobil ini termasuk tergantung tujuan");
+                biayaBaru = 0;
+                tergantungTujuanBaru = true;
+            } else {
+                System.out.println("Mobil ini bukan termasuk tergantung tujuan");
+                tergantungTujuanBaru = false;
+                System.out.print("Masukan Biaya Per Hari : ");
+                biayaBaru = Double.parseDouble(Masukan.readLine());
+            }
+            daftarMobil.add(new Mobil(idMobilBaru, namaMobilBaru, biayaBaru, tergantungTujuanBaru));
+            System.out.print("Masukan data lagi [y/t] ? ");
+            String dataLagi = Masukan.readLine();
+            if(dataLagi.equalsIgnoreCase("t")){
+                lanjutMobil = false;
+            }
+            idMobilBaru++;
+        }
+    }
+
+    public static void hapusMobil() throws IOException {
+        lanjutMobil = true;
+        while(lanjutMobil) {
+            if(daftarMobil.isEmpty()){
+                System.out.println("Tidak Ada Data yang bisa di hapus");
+            }
+            tampilkanSemuaMobil();
+            System.out.print("Masukan Nomer (1-" + daftarMobil.size() + "): ");
+            int posisi = Integer.parseInt(Masukan.readLine());
+            
+            if (posisi >= 1 && posisi <= daftarMobil.size()) {
+                daftarMobil.remove(posisi - 1);
+                System.out.println("Mobil dihapus!");
+            } else {
+                System.out.println("Input tidak valid!");
+            }
+            
+            System.out.print("Hapus Mobil yang lain ? [y/t] ");
+            String hapus = Masukan.readLine();
+            if(hapus.equalsIgnoreCase("t")) {
+                lanjutMobil = false;
+            }
+        }
+    }
+
+    public static void editMobil() throws IOException {
+        lanjutMobil = true;
+        while(lanjutMobil) {
+            if(daftarMobil.isEmpty()) {
+                System.out.println("Tidak Ada Data Yang Bisa di Edit");
+            }
+            tampilkanSemuaMobil();
+            System.out.println("Masukan Nomer (1-" + daftarMobil.size() + "): ");
+            int posisi = Integer.parseInt(Masukan.readLine());
+            if(posisi >= 1 && posisi <= daftarMobil.size()) {
+                Mobil mobil = daftarMobil.get(posisi-1);
+                System.out.println("Tekan Enter Untuk Mempertahankan Data Lama");
+                System.out.print("Masukan Nama Mobil Baru [" + mobil.namaMobil + "] :");
+                String namaBaru = Masukan.readLine();
+                if(!namaBaru.isEmpty()) {
+                    mobil.namaMobil = namaBaru;
+                }
+                System.out.print("Tergantung tujuan [y/t] [" + mobil.tergantungTujuan + "] :");
+                String tujuan = Masukan.readLine();
+                if(!tujuan.isEmpty()) {
+                    if(tujuan.equalsIgnoreCase("y")) {
+                        mobil.tergantungTujuan = true;
+                        mobil.biaya = 0;
+                        System.out.println("Mobil Ini Tergantung Tujuan");
+                    } else {
+                        mobil.tergantungTujuan = false;
+                        System.out.print("Masukan Biaya Per Hari [" + mobil.biaya + "] : ");
+                        String biayaBaru = Masukan.readLine();
+                        if(!biayaBaru.isEmpty()) {
+                            mobil.biaya = Double.parseDouble(biayaBaru);
+                        }
+                    }
+                }
+                System.out.println("Data Berhasil Di update");
+            } else {
+                System.out.println("Nomer Tidak Valid!!");
+            }
+            System.out.print("Ingin Mengubah data lagi [y/t] : ");
+            String jawab = Masukan.readLine();
+            if(jawab.equalsIgnoreCase("t")) {
+                lanjutMobil = false;
+            }
+        }
+    }
+
+    public static void hapusSewa() throws IOException {
+        boolean lanjutHapus = true;
+        while(lanjutHapus) {
+            if(daftarSewa.isEmpty()) {
+                System.out.println("Tidak Ada Data Rental yang bisa dihapus");
+                return;
+            }
+            tampilkanSewa();
+            System.out.print("Masukan Nomor Rental yang akan dihapus (1-" + daftarSewa.size() + "): ");
+            int posisi = Integer.parseInt(Masukan.readLine());
+            if (posisi >= 1 && posisi <= daftarSewa.size()) {
+                DataSewa sewaHapus = daftarSewa.get(posisi - 1);
+                for(Mobil mobil : daftarMobil) {
+                    if(mobil.id == sewaHapus.idMobil) {
+                        mobil.tersedia = true;
+                        break;
+                    }
+                }
+                daftarSewa.remove(posisi - 1);
+                System.out.println("Data Rental berhasil dihapus!");
+            } else {
+                System.out.println("Nomor Rental tidak valid!");
+            }
+            System.out.print("Hapus data rental lain? (y/t): ");
+            String jawab = Masukan.readLine();
+            if(jawab.equalsIgnoreCase("t")) {
+                lanjutHapus = false;
+            }
+        }
+    }
+
+    public static void editSewa() throws IOException, ParseException {
+        SimpleDateFormat formatTanggal = new SimpleDateFormat("dd-MM-yyyy");
+        boolean lanjutEdit = true;
+        while(lanjutEdit) {
+            if(daftarSewa.isEmpty()) {
+                System.out.println("Tidak Ada Data Rental yang bisa diedit");
+                return;
+            }
+            tampilkanSewa();
+            System.out.print("Masukan Nomor Rental yang akan diedit (1-" + daftarSewa.size() + "): ");
+            int posisi = Integer.parseInt(Masukan.readLine());
+            if (posisi >= 1 && posisi <= daftarSewa.size()) {
+                DataSewa sewa = daftarSewa.get(posisi - 1);
+                Mobil mobilSekarang = dapatkanMobilDariId(sewa.idMobil);
+                System.out.println("\nTekan Enter untuk mempertahankan data lama");
+                System.out.print("Masukkan Nama Baru [" + sewa.nama + "]: ");
+                String namaBaru = Masukan.readLine();
+                if(!namaBaru.isEmpty()) {
+                    sewa.nama = namaBaru;
+                }
+                System.out.print("Masukkan NIK Baru [" + sewa.nik + "]: ");
+                String nikBaru = Masukan.readLine();
+                if(!nikBaru.isEmpty()) {
+                    sewa.nik = nikBaru;
+                }
+                System.out.print("Ganti Mobil? (y/t): ");
+                if(Masukan.readLine().equalsIgnoreCase("y")) {
+                    tampilkanSemuaMobil();
+                    System.out.print("Pilih nomor mobil baru (1-" + daftarMobil.size() + "): ");
+                    int indeksMobilBaru = Integer.parseInt(Masukan.readLine()) - 1;
+                    
+                    if(indeksMobilBaru >= 0 && indeksMobilBaru < daftarMobil.size()) {
+                        Mobil mobilBaru = daftarMobil.get(indeksMobilBaru);
+                        if(!mobilBaru.tersedia && mobilBaru.id != mobilSekarang.id) {
+                            System.out.println("Mobil tidak tersedia untuk disewa!");
+                        } else {
+                            mobilSekarang.tersedia = true;
+                            mobilBaru.tersedia = false;
+                            sewa.idMobil = mobilBaru.id;
+                        }
+                    } else {
+                        System.out.println("Nomor mobil tidak valid!");
+                    }
+                }
+                System.out.print("Gunakan Supir? (y/t) [" + (sewa.supir ? "y" : "t") + "]: ");
+                String supirBaru = Masukan.readLine();
+                if(!supirBaru.isEmpty()) {
+                    sewa.supir = supirBaru.equalsIgnoreCase("y");
+                }
+                System.out.print("Masukkan Tanggal Berangkat Baru (dd-MM-yyyy) [" + formatTanggal.format(sewa.tanggalBerangkat) + "]: ");
+                String tanggalBerangkatBaru = Masukan.readLine();
+                if(!tanggalBerangkatBaru.isEmpty()) {
+                    sewa.tanggalBerangkat = formatTanggal.parse(tanggalBerangkatBaru);
+                }
+                System.out.print("Masukkan Tanggal Kembali Baru (dd-MM-yyyy) [" + formatTanggal.format(sewa.tanggalKembali) + "]: ");
+                String tanggalKembaliBaru = Masukan.readLine();
+                if(!tanggalKembaliBaru.isEmpty()) {
+                    sewa.tanggalKembali = formatTanggal.parse(tanggalKembaliBaru);
+                }
+                Mobil mobilPilihan = dapatkanMobilDariId(sewa.idMobil);
+                System.out.print("Masukkan Tujuan Baru [" + sewa.tujuan + "]: ");
+                String tujuanBaru = Masukan.readLine();
+                if(!tujuanBaru.isEmpty()) {
+                    sewa.tujuan = tujuanBaru;
+                }
+                long selisihMiliDetik = sewa.tanggalKembali.getTime() - sewa.tanggalBerangkat.getTime();
+                long selisihHari = TimeUnit.DAYS.convert(selisihMiliDetik, TimeUnit.MILLISECONDS);
+                if(mobilPilihan.tergantungTujuan) {
+                    System.out.print("Masukkan Biaya Sesuai Tujuan Baru: ");
+                    String biayaBaru = Masukan.readLine();
+                    if(!biayaBaru.isEmpty()) {
+                        sewa.totalBiaya = Double.parseDouble(biayaBaru);
+                    }
+                } else {
+                    sewa.totalBiaya = mobilPilihan.biaya * selisihHari;
+                }
                 
-            subtotal += rental.totalBiaya;
-            grandTotal += rental.totalBiaya;
-        }
-        System.out.println("======================================================================================================================================================");
-        System.out.printf("Subtotal Halaman %d: Rp %,.0f\n", currentPage, subtotal);
-        System.out.println("======================================================================================================================================================");
-        if (currentPage == totalPages) {
-            System.out.printf("GRAND TOTAL: Rp %,.0f\n", grandTotal);
-            System.out.println("======================================================================================================================================================");
-            System.out.println("Data sudah habis. Tekan enter untuk selesai...");
-            Input.readLine();
-        } else {
-            System.out.println("Tekan enter untuk halaman berikutnya...");
-            Input.readLine();
+                if(sewa.supir) {
+                    sewa.totalBiaya += 500000 * selisihHari;
+                }
+                System.out.println("Data Rental berhasil diupdate!");
+                System.out.println("Total Biaya Baru: Rp " + String.format("%,.0f", sewa.totalBiaya));
+            } else {
+                System.out.println("Nomor Rental tidak valid!");
+            }
+            System.out.print("Edit data rental lain? (y/t): ");
+            String jawab = Masukan.readLine();
+            if(jawab.equalsIgnoreCase("t")) {
+                lanjutEdit = false;
+            }
         }
     }
-    if (rentals.isEmpty()) {
-        System.out.println("Tidak ada data rental untuk dicetak.");
-        System.out.print("Tekan enter untuk kembali ke menu...");
-        Input.readLine();
+
+    public static void cetakLaporan() throws IOException {
+        SimpleDateFormat formatTanggal = new SimpleDateFormat("dd-MM-yyyy");
+        final int ITEM_PER_HALAMAN = 3;
+        int totalHalaman = (int) Math.ceil((double) daftarSewa.size() / ITEM_PER_HALAMAN);
+        double totalKeseluruhan = 0;
+        for (int halamanSaatIni = 1; halamanSaatIni <= totalHalaman; halamanSaatIni++) {
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+            System.out.println("LAPORAN DATA RENTAL MOBIL");
+            System.out.println("MAULANA TRANS");
+            System.out.println("Halaman: " + halamanSaatIni + " dari " + totalHalaman);
+            System.out.println("|======================================================================================================================================================|");
+            System.out.printf("|%-4s|%-15s|%-15s|%-18s|%-8s|%-12s|%-17s|%-12s|%-23s|%-16s|\n",
+                    "No.",
+                    "Nama",
+                    "NIK",
+                    "Mobil",
+                    "Supir",
+                    "Tujuan",
+                    "Total Biaya",
+                    "Durasi (hari)",
+                    "Jadwal Keberangkatan",
+                    "Jadwal Kembali");
+            System.out.println("|====|===============|===============|==================|========|============|=================|=============|=======================|================|");
+            int indeksAwal = (halamanSaatIni - 1) * ITEM_PER_HALAMAN;
+            int indeksAkhir = Math.min(indeksAwal + ITEM_PER_HALAMAN, daftarSewa.size());
+            double subtotal = 0;
+            for (int i = indeksAwal; i < indeksAkhir; i++) {
+                DataSewa sewa = daftarSewa.get(i);
+                Mobil mobil = dapatkanMobilDariId(sewa.idMobil);
+                String namaMobil = mobil != null ? mobil.namaMobil : "Unknown";
+                long selisihMiliDetik = sewa.tanggalKembali.getTime() - sewa.tanggalBerangkat.getTime();
+                long selisihHari = TimeUnit.DAYS.convert(selisihMiliDetik, TimeUnit.MILLISECONDS);
+                System.out.printf("|%-4d|%-15s|%-15s|%-18s|%-8s|%-12s|Rp %,-14.0f|%-13d|%-23s|%-16s|\n",
+                    i + 1,
+                    sewa.nama,
+                    sewa.nik,
+                    namaMobil,
+                    sewa.supir ? "Ya" : "Tidak",
+                    sewa.tujuan,
+                    sewa.totalBiaya,
+                    selisihHari,
+                    formatTanggal.format(sewa.tanggalBerangkat),
+                    formatTanggal.format(sewa.tanggalKembali));
+                subtotal += sewa.totalBiaya;
+                totalKeseluruhan += sewa.totalBiaya;
+            }
+            System.out.println("|------------------------------------------------------------------------------------------------------------------------------------------------------|");
+            System.out.printf("|%-4s|%-31s|%-18s|%-8s|%-12s|Rp %,-14.0f|%-13s|%-23s|%-16s|\n",
+                    " ",
+                    "Subtotal Halaman Ini",
+                    " ",
+                    " ",
+                    " ",
+                    subtotal,
+                    " ",
+                    " ",
+                    " ");
+            System.out.println("========================================================================================================================================================");
+            if (halamanSaatIni == totalHalaman) {
+                 System.out.printf("|%-4s|%-31s|%-18s|%-8s|%-12s|Rp %,-14.0f|%-13s|%-23s|%-16s|\n",
+                    " ",
+                    "Grand Total",
+                    " ",
+                    " ",
+                    " ",
+                    totalKeseluruhan,
+                    " ",
+                    " ",
+                    " ");
+                System.out.println("========================================================================================================================================================");
+                System.out.println("Data sudah habis. Tekan enter untuk selesai...");
+                Masukan.readLine();
+            } else {
+                System.out.println("Tekan enter untuk halaman berikutnya...");
+                Masukan.readLine();
+            }
+        }
+        if (daftarSewa.isEmpty()) {
+            System.out.println("Tidak ada data rental untuk dicetak.");
+            System.out.print("Tekan enter untuk kembali ke menu...");
+            Masukan.readLine();
+        }
     }
-}
-    public static void main(String[] args)throws IOException, ParseException {
-        initializeSampleData();
-//        initializeSampleRentalData();
-        while(true){
-        System.out.println("Rental Mobil");
-        System.out.println("24.240.0028 | Muhammad Ichsan");
-        showMenu();
-        int choice;
-        System.out.print("Masukan Nomer Menu : ");
-        choice = Integer.parseInt(Input.readLine());
-            switch(choice) {
+
+    public static void main(String[] args) throws IOException, ParseException {
+        inisialisasiContohData();
+//        inisialisasiContohDataSewa();
+        while(true) {
+            System.out.println("Rental Mobil");
+            System.out.println("24.240.0028 | Muhammad Ichsan");
+            tampilkanMenu();
+            int pilihan;
+            System.out.print("Masukan Nomer Menu : ");
+            pilihan = Integer.parseInt(Masukan.readLine());
+            switch(pilihan) {
                 case 0 -> System.exit(0);
-                case 1 -> showallCars();
-                case 2 -> insertCars();
-                case 3 -> deleteCars();
-                case 4 -> editCars();
-                case 5 -> showRent();
-                case 6 -> insertRent();
-                case 7 -> editRent();
-                case 8 -> deleteRent();
+                case 1 -> tampilkanSemuaMobil();
+                case 2 -> tambahMobil();
+                case 3 -> hapusMobil();
+                case 4 -> editMobil();
+                case 5 -> tampilkanSewa();
+                case 6 -> tambahSewa();
+                case 7 -> editSewa();
+                case 8 -> hapusSewa();
                 case 9 -> cetakLaporan();
-                default -> System.out.println("Pilihan Tidak valid");
+                default -> System.out.println("Pilihan tidak valid");
             }
         }
     }
