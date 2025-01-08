@@ -26,7 +26,9 @@ Masukan NIK, Nama, Mobil yang dipilih, jadwal berangkat, jadwal kembali, menggun
 -	Proses
 Memproses data, menghitung biaya, durasi dalam hari, dan kalkulasi biaya total
 -	Output	
-Mencetak data laporan dengan pagination, dengan 3 data per halaman dengan subtotal halaman dan grand total. Untuk lebih detailnya silahkan click file Pseudocode
+Mencetak data laporan dengan pagination, dengan 3 data per halaman dengan subtotal halaman dan grand total.
+</br>
+Untuk lebih detailnya silahkan click file Pseudocode
 </br>
 
 Link Download Program <a href="https://drive.google.com/drive/folders/148PMSFF0EssnYybxjr2NqiQ3saZBbwvc?usp=sharing" target="_blank" style="text-decoration: none;">Click Me!</a> 
