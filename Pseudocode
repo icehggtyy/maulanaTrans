@@ -2,144 +2,146 @@
 
 ## Struktur Data
 
-### Kelas Mobil (Car)
+### Kelas Mobil
 - id: integer
-- namaMobil: string 
+- namaMobil: string
 - biaya: double
-- isAvailable: boolean
-- tujuans: boolean (true jika biaya tergantung tujuan)
+- tersedia: boolean
+- tergantungTujuan: boolean
 
-### Kelas Data Rental (RentalData)
-- rentalId: integer
-- carId: integer
+### Kelas DataSewa
+- idSewa: integer
+- idMobil: integer
 - nik: string
 - nama: string
 - supir: boolean
 - tujuan: string
 - totalBiaya: double
-- jadwalBerangkat: Date
-- jadwalKembali: Date
+- tanggalBerangkat: Date
+- tanggalKembali: Date
 
 ## Program Utama
 
 MULAI
-    Inisialisasi ArrayList cars untuk menyimpan data mobil
-    Inisialisasi ArrayList rentals untuk menyimpan data rental
+    Inisialisasi ArrayList daftarMobil untuk menyimpan data mobil
+    Inisialisasi ArrayList daftarSewa untuk menyimpan data sewa
     Inisialisasi BufferedReader untuk input
-    Panggil initializeSampleData() untuk data mobil awal
-    
+    Panggil inisialisasiContohData() untuk data mobil awal
+
     WHILE true
-        Tampilkan header "Rental Mobil"
-        Tampilkan nama dan NIM
-        Tampilkan menu pilihan
-        Baca pilihan menu
+        Tampilkan "Rental Mobil"
+        Tampilkan "24.240.0028 | Muhammad Ichsan"
+        Tampilkan menu
+        Input pilihan menu
 
         SWITCH pilihan
             CASE 0: keluar dari program
-            CASE 1: tampilkan semua mobil
-            CASE 2: tambah mobil baru
-            CASE 3: hapus mobil
-            CASE 4: edit mobil
-            CASE 5: tampilkan semua rental
-            CASE 6: tambah rental baru
-            CASE 7: edit data rental
-            CASE 8: hapus data rental
-            CASE 9: cetak laporan rental
-            DEFAULT: tampilkan "Pilihan Tidak Valid"
+            CASE 1: tampilkanSemuaMobil()
+            CASE 2: tambahMobil()
+            CASE 3: hapusMobil()
+            CASE 4: editMobil()
+            CASE 5: tampilkanSewa()
+            CASE 6: tambahSewa()
+            CASE 7: editSewa()
+            CASE 8: hapusSewa()
+            CASE 9: cetakLaporan()
+            DEFAULT: tampilkan "Pilihan tidak valid"
         END SWITCH
     END WHILE
 SELESAI
 
 ## Prosedur-prosedur Detail
 
-### Prosedur Tampilkan Semua Mobil
+### Prosedur tampilkanSemuaMobil
 MULAI
+    Tampilkan "Data Mobil"
     Tampilkan header tabel
-    IF cars kosong THEN
+    IF daftarMobil kosong THEN
         Tampilkan "Tidak Terdapat Data"
     ELSE
-        FOR setiap mobil dalam cars
+        FOR setiap mobil dalam daftarMobil
             Tampilkan nomor urut
             Tampilkan nama mobil
             Tampilkan harga sewa per hari
             Tampilkan status ketersediaan
-            Tampilkan keterangan (tergantung tujuan/tidak)
+            Tampilkan keterangan tergantung tujuan
         END FOR
     END IF
+    Tampilkan keterangan tambahan
 SELESAI
 
-### Prosedur Tambah Mobil
+### Prosedur tambahMobil
 MULAI
-    SET carss = true
-    SET idCars = 1
+    SET lanjutMobil = true
+    SET idMobilBaru = 1
     
-    WHILE carss = true
+    WHILE lanjutMobil = true
         Input nama mobil
-        Input apakah tergantung tujuan (y/t)
+        Input apakah tergantung tujuan [y/t]
         
         IF tergantung tujuan THEN
             SET biaya = 0
-            SET tujuanss = true
+            SET tergantungTujuanBaru = true
         ELSE
-            SET tujuanss = false
+            SET tergantungTujuanBaru = false
             Input biaya per hari
         END IF
         
-        Tambahkan mobil baru ke ArrayList cars
+        Tambahkan mobil baru ke daftarMobil
         
         Input "Masukan data lagi [y/t]?"
         IF jawaban = 't' THEN
-            SET carss = false
+            SET lanjutMobil = false
         END IF
         
-        INCREMENT idCars
+        INCREMENT idMobilBaru
     END WHILE
 SELESAI
 
-### Prosedur Tambah Rental
+### Prosedur tambahSewa
 MULAI
-    SET continueCustomer = true
-    SET rentalId = ukuran rentals + 1
+    SET lanjutPelanggan = true
+    SET idSewa = ukuran daftarSewa + 1
     
-    WHILE continueCustomer = true
-        Input NIK pelanggan
-        Input nama pelanggan
-        SET continueRental = true
+    WHILE lanjutPelanggan = true
+        Input NIK
+        Input nama
+        SET lanjutSewa = true
         
-        WHILE continueRental AND cars tidak kosong
-            Tampilkan semua mobil
+        WHILE lanjutSewa AND daftarMobil tidak kosong
+            tampilkanSemuaMobil()
             Input pilihan mobil
             
             IF pilihan valid THEN
                 Ambil mobil yang dipilih
                 IF mobil tersedia THEN
-                    Input penggunaan supir
+                    Input penggunaan supir [y/t]
                     Input tanggal berangkat
                     Input tanggal kembali
-                    Hitung durasi dalam hari
+                    Hitung selisih hari
                     
                     IF mobil tergantung tujuan THEN
                         Input tujuan
                         Input biaya sesuai tujuan
                     ELSE
                         Input tujuan
-                        Hitung totalBiaya = biaya_mobil * durasi
+                        Hitung totalBiaya = biaya_mobil * selisih_hari
                     END IF
                     
                     IF menggunakan supir THEN
-                        tambahkan biaya supir ke totalBiaya
+                        Tambah biaya supir ke totalBiaya
                     END IF
                     
-                    Tambahkan rental baru ke ArrayList rentals
+                    Tambahkan sewa baru ke daftarSewa
                     Set mobil tidak tersedia
                     Tampilkan total biaya
                     
-                    Input "Sewa mobil lain?"
+                    Input "Sewa mobil lain? [y/t]"
                     IF jawaban = 't' THEN
-                        SET continueRental = false
+                        SET lanjutSewa = false
                     END IF
                     
-                    INCREMENT rentalId
+                    INCREMENT idSewa
                 ELSE
                     Tampilkan "Mobil tidak tersedia"
                 END IF
@@ -148,34 +150,35 @@ MULAI
             END IF
         END WHILE
         
-        Input "Tambah pelanggan baru?"
+        Input "Tambah pelanggan baru? [y/t]"
         IF jawaban = 't' THEN
-            SET continueCustomer = false
+            SET lanjutPelanggan = false
         END IF
     END WHILE
 SELESAI
 
-### Prosedur Cetak Laporan
+### Prosedur cetakLaporan
 MULAI
-    SET ITEMS_PER_PAGE = 3
+    SET ITEM_PER_HALAMAN = 3
     Hitung total halaman
-    SET grandTotal = 0
+    SET totalKeseluruhan = 0
     
     FOR setiap halaman
         Bersihkan layar
-        Tampilkan header laporan
+        Tampilkan "LAPORAN DATA RENTAL MOBIL"
+        Tampilkan "MAULANA TRANS"
         Tampilkan nomor halaman
         
-        SET startIdx = (halaman_sekarang - 1) * ITEMS_PER_PAGE
-        SET endIdx = minimum(startIdx + ITEMS_PER_PAGE, jumlah_rental)
+        SET indeksAwal = (halaman_sekarang - 1) * ITEM_PER_HALAMAN
+        SET indeksAkhir = minimum(indeksAwal + ITEM_PER_HALAMAN, jumlah_sewa)
         SET subtotal = 0
         
-        FOR i = startIdx SAMPAI endIdx
-            Ambil data rental
+        FOR i = indeksAwal SAMPAI indeksAkhir
+            Ambil data sewa
             Ambil data mobil
-            Hitung durasi rental
-            Tampilkan data rental dalam format tabel
-            Tambahkan ke subtotal dan grandTotal
+            Hitung durasi sewa
+            Tampilkan data sewa dalam format tabel
+            Tambahkan ke subtotal dan totalKeseluruhan
         END FOR
         
         Tampilkan subtotal halaman
@@ -188,8 +191,8 @@ MULAI
         END IF
     END FOR
     
-    IF rentals kosong THEN
-        Tampilkan "Tidak ada data rental"
+    IF daftarSewa kosong THEN
+        Tampilkan "Tidak ada data rental untuk dicetak"
         Tunggu input enter
     END IF
 SELESAI
